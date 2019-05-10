@@ -36,7 +36,7 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val actual = board.flood(2)
+      val (actual, colored) = board.flood(2)
 
       val expected = Board.fromString(
         """
@@ -47,7 +47,7 @@ class BoardSpec extends Specification {
           |2, 2, 2, 2, 2
         """.stripMargin)
 
-      actual must beEqualTo(expected)
+      (actual must_== expected) and (colored must_== 19)
     }
 
     "flood 2" >> {
@@ -62,7 +62,7 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1, 1, 1
         """.stripMargin)
 
-      val actual = board.flood(3)
+      val (actual, colored) = board.flood(3)
 
       val expected = Board.fromString(
         """
@@ -75,7 +75,7 @@ class BoardSpec extends Specification {
           |3, 3, 3, 3, 3, 3, 3
         """.stripMargin)
 
-      actual must beEqualTo(expected)
+      (actual must_== expected) and (colored must_== 31)
     }
 
     "flood 3" >> {
@@ -88,7 +88,7 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val actual = board.flood(2)
+      val (actual, colored) = board.flood(2)
 
       val expected = Board.fromString(
         """
@@ -99,7 +99,7 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      actual must beEqualTo(expected)
+      (actual must_== expected) and (colored must_== 1)
     }
 
   }

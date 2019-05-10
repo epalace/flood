@@ -13,7 +13,7 @@ class Board(val matrix: Array[Array[Int]]) {
     new Board(newMatrix)
   }
 
-  def flood(newColor: Int): Board = {
+  def flood(newColor: Int): (Board, Int) = {
     val dest = newCopy
     val size = dest.size
 
@@ -37,7 +37,7 @@ class Board(val matrix: Array[Array[Int]]) {
     }
 
     recFlood(Point(0, 0))
-    dest
+    (dest, visited.size)
   }
 
   override def equals(obj: Any): Boolean = {
