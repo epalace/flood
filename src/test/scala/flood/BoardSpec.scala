@@ -114,7 +114,22 @@ class BoardSpec extends Specification {
           |3, 3, 3, 3, 3, 3, 3
         """.stripMargin)
 
-      board.floodCount must_== 31
+      board.connectedCount must_== 31
+    }
+
+    "num components (1)" >> {
+      val board = Board.parse(
+        """
+          |3, 3, 3, 3, 3, 3, 3
+          |3, 0, 0, 4, 0, 3, 3
+          |3, 3, 0, 1, 0, 3, 3
+          |0, 0, 2, 2, 2, 0, 3
+          |3, 3, 3, 3, 3, 0, 3
+          |3, 0, 3, 0, 0, 0, 3
+          |3, 3, 3, 3, 3, 3, 3
+        """.stripMargin)
+
+      board.connectedRegions must_== 9
     }
 
   }

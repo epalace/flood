@@ -74,7 +74,9 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
           |1, 1, 1, 1, 1
         """.stripMargin)
-      Solver.AStar(board) must beEmpty
+      val (actual, numVisited) = Solver.aStar(board)
+
+      actual must beEmpty
     }
 
 
@@ -88,7 +90,8 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      Solver.AStar(board) must_==Seq(0)
+      val (actual, numVisited) = Solver.aStar(board)
+      actual must_==Seq(0)
     }
 
     "A* 2 change " >> {
@@ -101,7 +104,9 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      Solver.AStar(board) must_==Seq(0, 2)
+      val (actual, numVisited) = Solver.aStar(board)
+
+      actual must_==Seq(0, 2)
     }
 
     "A* 3 change " >> {
@@ -114,25 +119,24 @@ class SolverSpec extends Specification {
           |1, 1, 2, 2, 2
         """.stripMargin)
 
-      Solver.AStar(board) must_==Seq(0, 1, 2)
-    }
+      val (actual, numVisited) = Solver.aStar(board)
 
+      actual must_==Seq(0, 1, 2)
+      numVisited must_== 9
+    }
 
 //    "greedy random " >> {
 //      val board = Board.random(15, 4)
 //
 //      println(board)
 //      val greedy = Solver.greedy(board)
-//      val astar = Solver.AStar(board)
+//      val (astar2, aStarVisited2) = Solver.aStar(board, _.numComponents)
+//      val (astar, aStarVisited) = Solver.aStar(board)
 //      println(s"Greedy: ${greedy.size} ${greedy}")
 //      println(s"AStar: ${astar.size} ${astar}")
-//
-////      movements.foldLeft(board) { case (board, nextColor) =>
-////        val nextBoard = board.flood(nextColor)
-////        println(nextBoard)
-////        println()
-////        nextBoard
-////      }
+//      println(s"AStar visited: ${aStarVisited}")
+//      println(s"AStar2: ${astar2.size} ${astar2}")
+//      println(s"AStar2 visited: ${aStarVisited2}")
 //
 //      true
 //    }

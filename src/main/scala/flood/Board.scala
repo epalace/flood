@@ -1,5 +1,6 @@
 package flood
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.Random
@@ -14,7 +15,29 @@ class Board(val matrix: Array[Array[Int]]) {
     new Board(newMatrix)
   }
 
-  def floodCount: Int = {
+  def connectedRegions: Int = {
+    val visited = mutable.Set.empty[Point]
+
+    def findNotVisited: Option[Point] = {
+      (for { x <- 0 until size
+        y <- 0 until size
+      } yield Point(x, y)).find(p => !visited.contains(p))
+    }
+
+    @tailrec
+    def rec(point: Point, accum: Int): Int = {
+      recFlood(point, matrix(point.x)(point.y), visited, _ => ())
+
+      findNotVisited match {
+        case Some(nextPoint) => rec(nextPoint, accum + 1)
+        case None => accum
+      }
+    }
+
+    rec(Point(0, 0), 1)
+  }
+
+  def connectedCount: Int = {
     val visited = mutable.Set.empty[Point]
     recFlood(Point(0, 0), matrix(0)(0), visited, _ => ())
     visited.size
