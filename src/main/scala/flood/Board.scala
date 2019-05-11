@@ -6,6 +6,7 @@ import scala.util.Random
 
 class Board(val matrix: Array[Array[Int]]) {
   val size = matrix.length
+  def numColors = matrix.map(_.max).max + 1
 
   def newCopy: Board = {
     val newMatrix = Array.ofDim[Int](size, size)
@@ -13,31 +14,41 @@ class Board(val matrix: Array[Array[Int]]) {
     new Board(newMatrix)
   }
 
-  def flood(newColor: Int): (Board, Int) = {
+  def floodCount: Int = {
+    val visited = mutable.Set.empty[Point]
+    recFlood(Point(0, 0), matrix(0)(0), visited, _ => ())
+    visited.size
+  }
+
+  def flood(newColor: Int): Board = {
     val dest = newCopy
-    val size = dest.size
 
     val colorToChange = matrix(0)(0)
     val visited = mutable.Set.empty[Point]
 
-    def recFlood(p: Point): Unit = {
-      visited += p
-      dest.matrix(p.x)(p.y) = newColor
-      for  {
-        x <- p.x - 1 to p.x + 1 if x >= 0 && x < size
-        y <- p.y - 1 to p.y + 1 if y >= 0 && y < size
-        if x == p.x && y != p.y || x != p.x && y == p.y
-        if matrix(x)(y) == colorToChange
-      } {
-        val newPoint = Point(x, y)
+    def action(p: Point): Unit = dest.matrix(p.x)(p.y) = newColor
+
+    recFlood(Point(0, 0), colorToChange, visited, action)
+    dest
+  }
+
+  private[flood] def recFlood(p: Point, sourceColor: Int, visited: mutable.Set[Point], visitor: Point => Unit): Unit = {
+    def visit(x: Int, y: Int) = {
+      if (x >= 0 && x < size && y >= 0 && y < size && matrix(x)(y) == sourceColor){
+        val newPoint = Point(x,y)
         if (!visited.contains(newPoint)) {
-          recFlood(newPoint)
+          recFlood(newPoint, sourceColor, visited, visitor)
         }
       }
     }
 
-    recFlood(Point(0, 0))
-    (dest, visited.size)
+    visited += p
+    visitor(p)
+
+    visit(p.x + 1, p.y)
+    visit(p.x, p.y + 1)
+    visit(p.x - 1, p.y)
+    visit(p.x, p.y - 1)
   }
 
   override def equals(obj: Any): Boolean = {
@@ -55,7 +66,7 @@ case class Point(x: Int, y: Int)
 
 object Board {
 
-  def fromString(str: String): Board = {
+  def parse(str: String): Board = {
     val board = Source.fromString(str).getLines.filterNot(_.trim.isEmpty).map { line =>
       line.split(",").map(_.trim.toInt)
     }.toArray
@@ -71,7 +82,7 @@ object Board {
 
   def random(size: Int, numColors: Int) = {
     val board = empty(size)
-    for { x <- 0 to size; y <- 0 to size } { board.matrix(x)(y) = Random.nextInt(numColors) }
+    for { x <- 0 until size; y <- 0 until size } { board.matrix(x)(y) = Random.nextInt(numColors) }
     board
   }
 

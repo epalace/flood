@@ -6,7 +6,7 @@ class BoardSpec extends Specification {
   "Board" >> {
 
     "fromString" >> {
-      val board = Board.fromString(
+      val board = Board.parse(
         """
           |1, 1, 1, 1, 1
           |0, 0, 0, 0, 1
@@ -27,7 +27,7 @@ class BoardSpec extends Specification {
     }
 
     "flood 1" >> {
-      val board = Board.fromString(
+      val board = Board.parse(
         """
           |1, 1, 1, 1, 1
           |0, 0, 0, 0, 1
@@ -36,9 +36,9 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val (actual, colored) = board.flood(2)
+      val actual = board.flood(2)
 
-      val expected = Board.fromString(
+      val expected = Board.parse(
         """
           |2, 2, 2, 2, 2
           |0, 0, 0, 0, 2
@@ -47,11 +47,11 @@ class BoardSpec extends Specification {
           |2, 2, 2, 2, 2
         """.stripMargin)
 
-      (actual must_== expected) and (colored must_== 19)
+      (actual must_== expected)
     }
 
     "flood 2" >> {
-      val board = Board.fromString(
+      val board = Board.parse(
         """
           |1, 1, 1, 1, 1, 1, 1
           |1, 0, 0, 0, 0, 1, 1
@@ -62,9 +62,9 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1, 1, 1
         """.stripMargin)
 
-      val (actual, colored) = board.flood(3)
+      val actual = board.flood(3)
 
-      val expected = Board.fromString(
+      val expected = Board.parse(
         """
           |3, 3, 3, 3, 3, 3, 3
           |3, 0, 0, 0, 0, 3, 3
@@ -75,11 +75,11 @@ class BoardSpec extends Specification {
           |3, 3, 3, 3, 3, 3, 3
         """.stripMargin)
 
-      (actual must_== expected) and (colored must_== 31)
+      (actual must_== expected)
     }
 
     "flood 3" >> {
-      val board = Board.fromString(
+      val board = Board.parse(
         """
           |1, 0, 1, 1, 1
           |0, 1, 0, 0, 1
@@ -88,9 +88,9 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val (actual, colored) = board.flood(2)
+      val actual = board.flood(2)
 
-      val expected = Board.fromString(
+      val expected = Board.parse(
         """
           |2, 0, 1, 1, 1
           |0, 1, 0, 0, 1
@@ -99,7 +99,22 @@ class BoardSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      (actual must_== expected) and (colored must_== 1)
+      (actual must_== expected)
+    }
+
+    "floodCount 1" >> {
+      val board = Board.parse(
+        """
+          |3, 3, 3, 3, 3, 3, 3
+          |3, 0, 0, 0, 0, 3, 3
+          |3, 3, 0, 1, 0, 3, 3
+          |0, 0, 0, 0, 0, 0, 3
+          |3, 3, 3, 3, 3, 0, 3
+          |3, 0, 3, 0, 0, 0, 3
+          |3, 3, 3, 3, 3, 3, 3
+        """.stripMargin)
+
+      board.floodCount must_== 31
     }
 
   }
