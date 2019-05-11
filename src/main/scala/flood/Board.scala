@@ -1,18 +1,20 @@
 package flood
 
+import java.util
+
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.Random
 
-class Board(val matrix: Array[Array[Int]]) {
-  val size = matrix.length
-  def numColors = matrix.map(_.max).max + 1
+class Board(private[flood] val array: Array[Int], val size: Int) {
+  def numColors = array.max + 1
+
+  def get(x: Int, y: Int): Int = array(x * size + y)
+  def set(x: Int, y: Int, color: Int): Unit = array(x * size + y ) = color
 
   def newCopy: Board = {
-    val newMatrix = Array.ofDim[Int](size, size)
-    for { x <- 0 until size } { Array.copy(matrix(x), 0, newMatrix(x), 0, size) }
-    new Board(newMatrix)
+    new Board(array.clone, size)
   }
 
   def solved: Boolean = connectedCount == size * size
@@ -28,7 +30,7 @@ class Board(val matrix: Array[Array[Int]]) {
 
     @tailrec
     def rec(point: Point, accum: Int): Int = {
-      recFlood(point, matrix(point.x)(point.y), visited, _ => ())
+      recFlood(point, get(point.x, point.y), visited, _ => ())
 
       findNotVisited match {
         case Some(nextPoint) => rec(nextPoint, accum + 1)
@@ -41,17 +43,17 @@ class Board(val matrix: Array[Array[Int]]) {
 
   def connectedCount: Int = {
     val visited = mutable.Set.empty[Point]
-    recFlood(Point(0, 0), matrix(0)(0), visited, _ => ())
+    recFlood(Point(0, 0), get(0, 0), visited, _ => ())
     visited.size
   }
 
   def flood(newColor: Int): Board = {
     val dest = newCopy
 
-    val colorToChange = matrix(0)(0)
+    val colorToChange = get(0, 0)
     val visited = mutable.Set.empty[Point]
 
-    def action(p: Point): Unit = dest.matrix(p.x)(p.y) = newColor
+    def action(p: Point): Unit = dest.set(p.x, p.y, newColor)
 
     recFlood(Point(0, 0), colorToChange, visited, action)
     dest
@@ -59,7 +61,7 @@ class Board(val matrix: Array[Array[Int]]) {
 
   private[flood] def recFlood(p: Point, sourceColor: Int, visited: mutable.Set[Point], visitor: Point => Unit): Unit = {
     def visit(x: Int, y: Int) = {
-      if (x >= 0 && x < size && y >= 0 && y < size && matrix(x)(y) == sourceColor){
+      if (x >= 0 && x < size && y >= 0 && y < size && get(x, y) == sourceColor){
         val newPoint = Point(x,y)
         if (!visited.contains(newPoint)) {
           recFlood(newPoint, sourceColor, visited, visitor)
@@ -78,12 +80,12 @@ class Board(val matrix: Array[Array[Int]]) {
 
   override def equals(obj: Any): Boolean = {
     val that = obj.asInstanceOf[Board]
-    size == that.size && (0 until size).forall(i => java.util.Arrays.equals(matrix(i), that.matrix(i)))
+    size == that.size && util.Arrays.equals(array, that.array)
   }
 
-  override def hashCode(): Int = java.util.Arrays.deepHashCode(matrix.asInstanceOf[Array[AnyRef]])
+  override def hashCode(): Int = util.Arrays.hashCode(array)
 
-  override def toString(): String = matrix.map(_.mkString(", ")).mkString("\n")
+  override def toString(): String = array.grouped(size).map(_.mkString(", ")).mkString("\n")
 
 }
 
@@ -102,14 +104,14 @@ object Board {
         throw new IllegalArgumentException(s"Row #rowIndex illegal num columns ${numColumns}. Expected: ${numRows}")
       }
     }
-    new Board(board)
+    new Board(board.flatten, board.length)
   }
 
   def random(size: Int, numColors: Int) = {
     val board = empty(size)
-    for { x <- 0 until size; y <- 0 until size } { board.matrix(x)(y) = Random.nextInt(numColors) }
+    for { x <- 0 until size; y <- 0 until size } { board.set(x, y, Random.nextInt(numColors)) }
     board
   }
 
-  def empty(size: Int): Board = new Board(Array.ofDim[Int](size, size))
+  def empty(size: Int): Board = new Board(Array.ofDim[Int](size * size), size)
 }

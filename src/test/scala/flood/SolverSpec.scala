@@ -74,7 +74,7 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
           |1, 1, 1, 1, 1
         """.stripMargin)
-      val (actual, numVisited) = Solver.aStar(board)
+      val (actual, _, _) = Solver.aStar(board)
 
       actual must beEmpty
     }
@@ -90,7 +90,7 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val (actual, numVisited) = Solver.aStar(board)
+      val (actual, _, _) = Solver.aStar(board)
       actual must_==Seq(0)
     }
 
@@ -104,7 +104,7 @@ class SolverSpec extends Specification {
           |1, 1, 1, 1, 1
         """.stripMargin)
 
-      val (actual, numVisited) = Solver.aStar(board)
+      val (actual, _, _) = Solver.aStar(board)
 
       actual must_==Seq(0, 2)
     }
@@ -119,7 +119,7 @@ class SolverSpec extends Specification {
           |1, 1, 2, 2, 2
         """.stripMargin)
 
-      val (actual, numVisited) = Solver.aStar(board)
+      val (actual, numVisited, _) = Solver.aStar(board)
 
       actual must_==Seq(0, 1, 2)
       numVisited must_== 9

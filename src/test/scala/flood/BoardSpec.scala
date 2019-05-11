@@ -16,13 +16,13 @@ class BoardSpec extends Specification {
         """.stripMargin
       )
 
-      board.matrix must_== Array(
+      board.array must_== Array(
         Array(1, 1, 1, 1, 1),
         Array(0, 0, 0, 0, 1),
         Array(1, 1, 1, 1, 1),
         Array(1, 0, 1, 0, 1),
         Array(1, 1, 1, 1, 1)
-      )
+      ).flatten
 
     }
 

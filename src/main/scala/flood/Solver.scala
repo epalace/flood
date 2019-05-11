@@ -13,7 +13,7 @@ object Solver {
         accum
       } else {
         val (nextBoard, bestColor, maxFloodCount) = (for {
-          color <- 0 until numColors if color != board.matrix(0)(0)
+          color <- 0 until numColors if color != board.get(0, 0)
         } yield {
           val newBoard = board.flood(color)
           val floodCount = newBoard.connectedCount
@@ -27,13 +27,17 @@ object Solver {
     recGreedy(board, board.connectedCount, Vector.empty)
   }
 
-  def aStar(board: Board, heuristic: Board => Int = _ => 0): (Seq[Int], Int) = {
+  def aStar(board: Board, heuristic: Board => Int = _ => 0): (Seq[Int], Int, Int) = {
     val numColors = board.numColors
     val closedSet = mutable.Set.empty[Board]
     val openSet = mutable.PriorityQueue.empty[(Board, Vector[Int])](ordering(heuristic))
+    var maxOpenSetSize = 0
 
     @tailrec
     def recAStar: Vector[Int] = {
+      if (openSet.size > maxOpenSetSize) {
+        maxOpenSetSize = openSet.size
+      }
       val (board, mv) = openSet.dequeue()
       if (closedSet.contains(board)) {
         recAStar
@@ -42,21 +46,20 @@ object Solver {
         if (board.connectedCount == board.size * board.size) {
           mv
         } else {
-          val newNodes = for {
-            color <- 0 until numColors if color != board.matrix(0)(0)
-          } yield {
-            val newBoard = board.flood(color)
-            (newBoard, mv :+ color)
+          for {
+            color <- 0 until numColors if color != board.get(0, 0)
+            newBoard = board.flood(color) if !closedSet.contains(newBoard)
+          } {
+            openSet +=((newBoard, mv :+ color))
           }
 
-          openSet ++= newNodes
           recAStar
         }
       }
     }
 
     openSet +=((board, Vector.empty))
-    (recAStar, closedSet.size)
+    (recAStar, closedSet.size, maxOpenSetSize)
   }
 
   private[flood] def ordering(heuristic: Board => Int) =
