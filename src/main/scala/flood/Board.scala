@@ -15,6 +15,8 @@ class Board(val matrix: Array[Array[Int]]) {
     new Board(newMatrix)
   }
 
+  def solved: Boolean = connectedCount == size * size
+
   def connectedRegions: Int = {
     val visited = mutable.Set.empty[Point]
 

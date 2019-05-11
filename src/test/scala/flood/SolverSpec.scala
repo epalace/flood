@@ -124,22 +124,5 @@ class SolverSpec extends Specification {
       actual must_==Seq(0, 1, 2)
       numVisited must_== 9
     }
-
-//    "greedy random " >> {
-//      val board = Board.random(15, 4)
-//
-//      println(board)
-//      val greedy = Solver.greedy(board)
-//      val (astar2, aStarVisited2) = Solver.aStar(board, _.numComponents)
-//      val (astar, aStarVisited) = Solver.aStar(board)
-//      println(s"Greedy: ${greedy.size} ${greedy}")
-//      println(s"AStar: ${astar.size} ${astar}")
-//      println(s"AStar visited: ${aStarVisited}")
-//      println(s"AStar2: ${astar2.size} ${astar2}")
-//      println(s"AStar2 visited: ${aStarVisited2}")
-//
-//      true
-//    }
-
   }
 }
